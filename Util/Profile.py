@@ -47,13 +47,14 @@ class Profile():
         Returns:
             None
         """
-        self.music = param[1]
-        self.mode = param[2]
+        self.dir = param[1]
+        self.music = param[2]
+        self.mode = param[3]
         try:
             r = Util.requests.post(url=Util.reFind(param[0])[0])
         except:
             print('[  提示  ]:请检查你的配置链接填写是否正确!\r')
-            input('[  提示  ]：按任意键退出程序!\r')
+            #input('[  提示  ]：按任意键退出程序!\r')
             exit()
 
         print('[  提示  ]:批量获取所有视频中!\r')
@@ -105,7 +106,7 @@ class Profile():
             Util.log.error(e)
             # ERROR: list index out of range
             # {'status_code': 0, 'aweme_list': [], 'max_cursor': 0, 'min_cursor': xxx, 'extra': {'now': xxx, 'logid': 'xxx'}, 'has_more': False}
-            input('[  提示  ]：按任意键退出程序!\r')
+            #input('[  提示  ]：按任意键退出程序!\r')
             exit()
 
         # 构造第一次访问链接
@@ -117,8 +118,7 @@ class Profile():
             self.api_post_url = self.urls.USER_FAVORITE_A + datas.params
 
         # 创建用户文件夹
-        self.path = "." + self.sprit + "Download" + self.sprit + \
-            param[2] + self.sprit + self.nickname + self.sprit
+        self.path = self.dir
         if not Util.os.path.exists(self.path):
             Util.os.makedirs(self.path)
 
@@ -247,7 +247,7 @@ class Profile():
         # 图集
         self.image_list = []
         # 封面大图
-        # self.dynamic_cover = []
+        self.dynamic_cover = []
         for v in range(len(result)):
             try:
                 # url_list < 4 说明是图集
@@ -268,7 +268,7 @@ class Profile():
                         str(result[v]['video']['play_addr']['uri']))
                     self.aweme_id.append(str(result[v]['aweme_id']))
                     # nickname.append(str(result[v]['author']['nickname']))
-                    # self.dynamic_cover.append(str(result[v]['video']['dynamic_cover']['url_list'][0]))
+                    self.dynamic_cover.append(str(result[v]['video']['dynamic_cover']['url_list'][0]))
             except Exception as e:
                 # 输出日志
                 Util.log.info('%s,因为每次不一定完全返回35条数据！' % (e))

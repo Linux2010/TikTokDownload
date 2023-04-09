@@ -35,8 +35,8 @@ class Command:
         parser = Util.argparse.ArgumentParser(
             description='TikTokTool V1.3.0.70 使用帮助')
         parser.add_argument('--uid', '-u', type=str,
-                            help='为用户主页链接，支持长短链', required=False)
-        # parser.add_argument('--dir','-d', type=str,help='视频保存目录，非必要参数， 默认./Download', default='./Download/')
+                            help='为用户主页链接，非必要参数', required=False)
+        parser.add_argument('--dir','-d', type=str,help='视频保存目录，必要参数', required=False)
         # parser.add_argument('--single', '-s', type=str, help='单条视频链接，非必要参数，与--user参数冲突')
         parser.add_argument('--music', '-m', type=str,
                             help='是否下载视频原声， 默认no 可选yes', default='no')
@@ -63,6 +63,7 @@ class Command:
         if args.uid == None:
             print('[  警告  ]:未检测到命令，将使用配置文件进行批量下载!')
             self.uid = self.cfg.get('uid', 'uid')
+            self.dir = self.cfg.get('dir', 'dir')
             self.music = self.cfg.get('music', 'music')
             self.mode = self.cfg.get('mode', 'mode')
             self.cookie = self.cfg.get('cookie', 'cookie')
@@ -72,6 +73,7 @@ class Command:
             Util.log.info('[  提示  ]:读取本地配置完成!')
         else:
             self.uid = args.uid
+            self.dir = args.dir
             self.music = args.music
             self.mode = args.mode
             self.cookie = args.cookie
@@ -79,7 +81,7 @@ class Command:
             self.update = args.update
             print('[  提示  ]:读取命令完成!\r')
             Util.log.info('[  提示  ]:读取命令完成!')
-        return [self.uid, self.music, self.mode, self.cookie, self.interval, self.update]
+        return [self.uid,self.dir, self.music, self.mode, self.cookie, self.interval, self.update]
 
 
 if __name__ == '__main__':

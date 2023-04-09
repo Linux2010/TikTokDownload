@@ -191,4 +191,4 @@ else:
     print('[   🍎   ]:MacOS平台')
 
 # 检查版本
-Updata().get_Updata()
+#Updata().get_Updata()

@@ -42,6 +42,8 @@ class Download():
         # self.video_list = profileData.video_list
         # 作品uri列表
         self.uri_list = profileData.uri_list
+        # 作品封面列表
+        self.dynamic_cover = profileData.dynamic_cover
         # 作品id列表
         self.aweme_id = profileData.aweme_id
         # 作者
@@ -95,8 +97,7 @@ class Download():
                             self.author_list[i], len(self.author_list[i])))
 
                     # 检查视频下载情况
-                    file_state = self.check.test(
-                        self.path, creat_time, self.author_list[i], ".mp4")
+                    file_state = self.check.test(self.path,  Util.re.sub(r'[\\/:*?"<>|\r\n] + ', "_", self.author_list[i]), ".mp4")
                     if file_state == True:
                         continue
                     else:
@@ -109,8 +110,7 @@ class Download():
                                 js['aweme_detail']['music']['play_url']['url_list'][0])
                             music_title = str(
                                 js['aweme_detail']['music']['author']) + '创作的视频原声'
-                            m_url = self.path + self.sprit + creat_time + Util.re.sub(
-                                r'[\\/:*?"<>|\r\n]+', "_", music_title) + '_' + self.author_list[i] + '.mp3'
+                            m_url = self.path + self.sprit + creat_time + Util.re.sub(r'[\\/:*?"<>|\r\n]+', "_", music_title) + '_' + self.author_list[i] + '.mp3'
                             if len(self.author_list[i]) > 20:
                                 filename = creat_time[:10] + self.author_list[i][:20] + "..."
                             else:
@@ -126,23 +126,29 @@ class Download():
                         print('\r[  警告  ]:下载音频出错!\r')
                         Util.log.error('[  ❌  ]:下载音频出错!')
 
-                    # 尝试下载视频
+                    # 尝试下载视频&封面
                     try:
                         # 生成1080p视频链接
                         self.new_video_list.append(
                             self.uri_url % self.uri_list[i])
+                        print('[FM]'+self.dynamic_cover[i])
                         try:
-                            v_url = self.path + self.sprit + creat_time + Util.re.sub(
-                                r'[\\/:*?"<>|\r\n] + ', "_", self.author_list[i]) + '.mp4'
+                            #视频
+                            v_url = self.path + self.sprit + Util.re.sub(r'[\\/:*?"<>|\r\n] + ', "_", self.author_list[i]) + '.mp4'
                             if len(self.author_list[i]) > 20:
                                 filename = creat_time[:10] + self.author_list[i][:20] + "..."
                             else:
                                 filename = creat_time[:10] + self.author_list[i]
-                            task_id = Util.progress.add_task(
-                                "[  视频  ]:", filename=filename, start=False)
-                            pool.submit(
-                                Util.copy_url, task_id, self.new_video_list[0], self.author_list[i], v_url)
+                            task_id = Util.progress.add_task("[  视频  ]:", filename=filename, start=False)
+                            pool.submit(Util.copy_url, task_id, self.new_video_list[0], self.author_list[i], v_url)
                             Util.log.info(v_url)
+
+                            #封面
+                            img_url = self.path + self.sprit + Util.re.sub(r'[\\/:*?"<>|\r\n] + ', "_", self.author_list[i]) + '.jpg'
+                            img_task_id = Util.progress.add_task("[  封面  ]:", filename=filename, start=False)
+                            pool.submit(Util.copy_url, img_task_id, self.dynamic_cover[i], self.author_list[i], img_url)
+                            Util.log.info(img_url)
+
                             # 清除每个旧的视频列表
                             self.new_video_list = []
                         except Exception as videoError:

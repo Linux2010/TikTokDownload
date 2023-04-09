@@ -22,7 +22,10 @@ class CheckInfo():
         pass
 
     # 检测视频是否已经下载过
-    def test(self, path, creat_time, file_name, file_type):
-        return Util.os.path.exists(path + creat_time + file_name + file_type)
+    def test(self, path, file_name, file_type):
+        filePath = path  + '/' + file_name + file_type
+        b = Util.os.path.exists(filePath)
+        print('{} check video file: {}'.format(b,filePath))
+        return b
 if __name__ == '__main__':
     CheckInfo()
