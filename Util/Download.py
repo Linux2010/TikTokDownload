@@ -131,7 +131,6 @@ class Download():
                         # 生成1080p视频链接
                         self.new_video_list.append(
                             self.uri_url % self.uri_list[i])
-                        print('[FM]'+self.dynamic_cover[i])
                         try:
                             #视频
                             v_url = self.path + self.sprit + Util.re.sub(r'[\\/:*?"<>|\r\n] + ', "_", self.author_list[i]) + '.mp4'
